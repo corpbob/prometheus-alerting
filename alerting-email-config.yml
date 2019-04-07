@@ -1,0 +1,31 @@
+apiVersion: v1
+data:
+  alertmanager.yml: |-
+    global:
+      resolve_timeout: 5m
+    
+    route:
+      group_by: ['alertname']
+      group_wait: 10s
+      group_interval: 10s
+      repeat_interval: 1h
+      receiver: 'email.hook'
+    receivers:
+    - name: 'email.hook'
+      email_configs:
+      - to: 'me@example.com'
+        from: 'me@example.com'
+        smarthost: smtp.x.com:587
+        auth_username: 'me@example.com'
+        auth_identity: 'me@example.com'
+        auth_password: 'your_password'
+    inhibit_rules:
+      - source_match:
+          severity: 'critical'
+        target_match:
+          severity: 'warning'
+        equal: ['alertname', 'dev', 'instance']
+kind: ConfigMap
+metadata:
+  name: alerting-email-config
+  namespace: alerting

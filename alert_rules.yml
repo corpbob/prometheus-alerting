@@ -1,0 +1,10 @@
+groups:
+- name: example
+  rules:
+  - alert: HighErrorRate
+    expr: round(sum(irate(istio_requests_total{destination_service="esbdemo.tech"}[5m])),0.001) > 2
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: High request latency

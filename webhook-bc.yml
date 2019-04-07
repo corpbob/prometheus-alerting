@@ -1,0 +1,47 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+  creationTimestamp: 2019-04-06T15:51:45Z
+  labels:
+    app: webhook
+  name: webhook
+  namespace: alerting
+  resourceVersion: "861930"
+  selfLink: /apis/build.openshift.io/v1/namespaces/alerting/buildconfigs/webhook
+  uid: e10260e2-5883-11e9-b590-02135ca0eaa4
+spec:
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: webhook:latest
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    git:
+      ref: master
+      uri: https://github.com/corpbob/alerting_mock_service.git
+    type: Git
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: nodejs:10
+        namespace: openshift
+    type: Source
+  triggers:
+  - imageChange:
+      lastTriggeredImageID: docker-registry.default.svc:5000/openshift/nodejs@sha256:5a914f2f7f5faa49466bf7182ad48e3738ae60916a7549d1793c1e53f60a51b4
+    type: ImageChange
+  - type: ConfigChange
+  - generic:
+      secret: efa0c918b79fd392
+    type: Generic
+  - github:
+      secret: 481c410abe867667
+    type: GitHub
+status:
+  lastVersion: 4

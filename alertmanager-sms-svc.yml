@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: alertmanager-sms
+  name: alertmanager-sms
+  namespace: alerting
+spec:
+  ports:
+  - name: 9093-tcp
+    port: 9093
+    protocol: TCP
+    targetPort: 9093
+  selector:
+    app: alertmanager-sms
+    deploymentconfig: alertmanager-sms
+  sessionAffinity: None
+  type: ClusterIP

@@ -43,5 +43,3 @@ spec:
   - github:
       secret: 481c410abe867667
     type: GitHub
-status:
-  lastVersion: 4

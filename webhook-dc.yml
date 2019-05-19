@@ -1,0 +1,82 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: webhook
+  name: webhook
+  namespace: alerting
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: webhook
+    deploymentconfig: webhook
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        app: webhook
+        deploymentconfig: webhook
+    spec:
+      containers:
+      - env:
+        - name: TWILIO_ACCOUNT_SID
+          valueFrom:
+            secretKeyRef:
+              key: TWILIO_ACCOUNT_SID
+              name: twilio
+        - name: TWILIO_AUTH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: TWILIO_AUTH_TOKEN
+              name: twilio
+        - name: TWILIO_NUMBER
+          valueFrom:
+            secretKeyRef:
+              key: TWILIO_NUMBER
+              name: twilio
+        - name: SEND_TO_NUMBERS
+          valueFrom:
+            secretKeyRef:
+              key: SEND_TO_NUMBERS
+              name: twilio
+        - name: PORT
+          value: "8080"
+        image: docker-registry.default.svc:5000/alerting/webhook@sha256:ab902b4b36c61c85ef75cc34fade35d16df15fd10bb97e3e82515344f57ff052
+        imagePullPolicy: Always
+        name: webhook
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - webhook
+      from:
+        kind: ImageStreamTag
+        name: webhook:latest
+        namespace: alerting
+    type: ImageChange

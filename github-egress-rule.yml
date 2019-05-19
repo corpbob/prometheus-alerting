@@ -1,0 +1,11 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: github-service-entry
+spec:
+  hosts:
+  - github.com
+  ports:
+  - name: http-443
+    number: 443
+    protocol: https

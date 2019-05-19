@@ -1,10 +1,11 @@
 groups:
 - name: example
   rules:
-  - alert: HighErrorRate
-    expr: round(sum(irate(istio_requests_total{destination_service="esbdemo.tech"}[5m])),0.001) > 2
+  - alert: TPS > 10
+    expr: round(sum(irate(istio_requests_total{destination_service_name="fortune-demo"}[1m])),0.001) > 3
     for: 1m
     labels:
       severity: critical
     annotations:
-      summary: High request latency
+      summary: High Outgoing Load to fortune-demo
+
